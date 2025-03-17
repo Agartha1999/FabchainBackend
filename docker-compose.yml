@@ -1,0 +1,48 @@
+version: "3"
+
+networks:
+  voicewaves_network_new:
+    driver: bridge
+    name: voicewaves_network_new
+    ipam:
+      config:
+        - subnet: 192.72.72.0/24
+         
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: 192.72.72.18
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_DATABASE: voicewaves
+      REACT_APP_PREV_BACK: ${REACT_APP_PREV_BACK}
+    volumes:
+      - .:/usr/src/app
+      - ../public/build:/usr/src/public/build
+    networks:
+      voicewaves_network_new:
+        ipv4_address: 192.72.72.19
+
+  db:
+    image: mariadb:latest
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: voicewaves
+    volumes:
+      - ./init-db:/docker-entrypoint-initdb.d # Persistindo os dados do banco de dados
+    networks:
+      voicewaves_network_new:
+        ipv4_address: 192.72.72.18
+
+volumes:
+  db_data: # Definindo o volume para persistir os dados do banco de dados
+
