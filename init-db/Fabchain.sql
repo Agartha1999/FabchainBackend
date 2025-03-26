@@ -9,6 +9,10 @@ CREATE TABLE Usuario (
     rol VARCHAR(50) NOT NULL
 );
 
+INSERT INTO Usuario (email, password, rol) VALUES
+('airam.raven98@gmail.com', '123456', 'administrador'),
+('raven@example.com', '12345', 'admin');
+
 CREATE TABLE Cliente_Taller (
     idClienteTaller INT PRIMARY KEY AUTO_INCREMENT,
     idUsuario INT NOT NULL,
@@ -18,12 +22,19 @@ CREATE TABLE Cliente_Taller (
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 );
 
+INSERT INTO Cliente_Taller (idUsuario, nombre, ruc, dni) VALUES
+(1, 'Taller A', '2145656789', '74244030'),
+(2, 'Taller B', '2145656790', '74244031');
+
 CREATE TABLE Administrador (
     idAdministrador INT PRIMARY KEY AUTO_INCREMENT,
     idUsuario INT NOT NULL,
     nombre VARCHAR(255) NOT NULL,
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 );
+
+INSERT INTO Administrador (idUsuario, nombre) VALUES
+(1, 'Johana');
 
 CREATE TABLE Cliente_Plataforma (
     idCliente INT PRIMARY KEY AUTO_INCREMENT,
@@ -34,6 +45,10 @@ CREATE TABLE Cliente_Plataforma (
     pasaporte VARCHAR(50),
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 );
+
+INSERT INTO Cliente_Plataforma (idUsuario, nombre, ruc, dni, pasaporte) VALUES
+(1, 'Cliente A', '2145656789', '74244030', 'ABC123'),
+(2, 'Cliente B', '2145656790', '74244031', 'XYZ456');
 
 CREATE TABLE Taller (
     idTaller INT PRIMARY KEY AUTO_INCREMENT,
@@ -46,11 +61,19 @@ CREATE TABLE Taller (
     FOREIGN KEY (idClienteTaller) REFERENCES Cliente_Taller(idClienteTaller)
 );
 
+INSERT INTO Taller (idClienteTaller, capacidad, contacto, estado, ruc, dniPasaporte) VALUES
+(1, 5, '918460801', 'Pendiente', '2145656789', '74244030'),
+(2, 10, '918460802', 'Verificado', '2145656790', '74244031');
+
 CREATE TABLE Proceso (
     idProceso INT PRIMARY KEY AUTO_INCREMENT,
     descripcion VARCHAR(255) NOT NULL,
     detallarHerramientas TEXT
 );
+
+INSERT INTO Proceso (descripcion, detallarHerramientas) VALUES
+('Proceso de producci贸n', 'Usamos herramientas A y B'),
+('Proceso de ensamblaje', 'Se requiere soldadura');
 
 CREATE TABLE Impresion (
     idImpresion INT PRIMARY KEY AUTO_INCREMENT,
@@ -59,6 +82,10 @@ CREATE TABLE Impresion (
     detallarHerramientas TEXT
 );
 
+INSERT INTO Impresion (materiales, tipoImpresora, detallarHerramientas) VALUES
+('Material A', 'Impresora 1', 'Detalles de impresi贸n A'),
+('Material B', 'Impresora 2', 'Detalles de impresi贸n B');
+
 CREATE TABLE ManufacturaMetalMecanica (
     idManufactura INT PRIMARY KEY AUTO_INCREMENT,
     herramientas VARCHAR(255),
@@ -66,11 +93,19 @@ CREATE TABLE ManufacturaMetalMecanica (
     detallarHerramientas TEXT
 );
 
+INSERT INTO ManufacturaMetalMecanica (herramientas, procesosEspeciales, detallarHerramientas) VALUES
+('Herramienta 1', 'Proceso A', 'Detalles de manufactura A'),
+('Herramienta 2', 'Proceso B', 'Detalles de manufactura B');
+
 CREATE TABLE Otros (
     idOtro INT PRIMARY KEY AUTO_INCREMENT,
     descripcionPersonalizada VARCHAR(255),
     detallarHerramientas TEXT
 );
+
+INSERT INTO Otros (descripcionPersonalizada, detallarHerramientas) VALUES
+('Otro proceso', 'Detalles de otro A'),
+('Otro proceso B', 'Detalles de otro B');
 
 CREATE TABLE Pedido (
     idPedido INT PRIMARY KEY AUTO_INCREMENT,
@@ -89,6 +124,10 @@ CREATE TABLE Pedido (
     FOREIGN KEY (idTaller) REFERENCES Taller(idTaller)
 );
 
+INSERT INTO Pedido (idProceso, idTaller, detalle, cantidad, estado, fechaSolicitud, fechaLimite, numeroOrden, planoPDF, planoCAD3D, cotizacion) VALUES
+(1, 1, 'Detalle del pedido 1', 10, 'Pendiente', '2025-03-25', '2025-04-25', 'ORD001', 'plano1.pdf', 'plano1.cad', 'cotizacion1.pdf'),
+(2, 2, 'Detalle del pedido 2', 5, 'En Progreso', '2025-03-26', '2025-04-26', 'ORD002', 'plano2.pdf', 'plano2.cad', 'cotizacion2.pdf');
+
 CREATE TABLE Pago (
     idPago INT PRIMARY KEY AUTO_INCREMENT,
     idTaller INT NOT NULL,
@@ -101,6 +140,10 @@ CREATE TABLE Pago (
     FOREIGN KEY (idPedido) REFERENCES Pedido(idPedido)
 );
 
+INSERT INTO Pago (idTaller, idPedido, monto, estado, fechaPago, metodoPago) VALUES
+(1, 1, 250.0, 'Completado', '2025-03-24', 'visa'),
+(2, 2, 500.0, 'Pendiente', '2025-03-26', 'mastercard');
+
 CREATE TABLE Cotizacion (
     idPedido INT PRIMARY KEY,
     precioUnitario FLOAT NOT NULL,
@@ -108,6 +151,10 @@ CREATE TABLE Cotizacion (
     descripcion TEXT,
     FOREIGN KEY (idPedido) REFERENCES Pedido(idPedido)
 );
+
+INSERT INTO Cotizacion (idPedido, precioUnitario, precioTotal, descripcion) VALUES
+(1, 20.0, 200.0, 'Descripci贸n A'),
+(2, 30.0, 150.0, 'Descripci贸n B');
 
 CREATE TABLE Comprobante (
     idComprobante INT PRIMARY KEY AUTO_INCREMENT,
@@ -120,6 +167,10 @@ CREATE TABLE Comprobante (
     FOREIGN KEY (idPedido) REFERENCES Pedido(idPedido)
 );
 
+INSERT INTO Comprobante (idPago, idPedido, fechaEmision, detalles, montoTotal) VALUES
+(1, 1, '2025-03-24', 'Detalles A', 250.0),
+(2, 2, '2025-03-26', 'Detalles B', 500.0);
+
 CREATE TABLE Entrega (
     idEntrega INT PRIMARY KEY AUTO_INCREMENT,
     idPedido INT NOT NULL,
@@ -129,11 +180,19 @@ CREATE TABLE Entrega (
     FOREIGN KEY (idPedido) REFERENCES Pedido(idPedido)
 );
 
+INSERT INTO Entrega (idPedido, fechaEntrega, detalles, estado) VALUES
+(1, '2025-03-25', 'Entrega A', 'Pendiente'),
+(2, '2025-03-27', 'Entrega B', 'Validado');
+
 CREATE TABLE Calificacion (
     idEntrega INT PRIMARY KEY,
     calificacion VARCHAR(50) NOT NULL,
     FOREIGN KEY (idEntrega) REFERENCES Entrega(idEntrega)
 );
+
+INSERT INTO Calificacion (idEntrega, calificacion) VALUES
+(1, '5'),
+(2, '4');
 
 -- Relaciones entre Taller y Procesos
 CREATE TABLE Taller_Proceso (
@@ -144,7 +203,11 @@ CREATE TABLE Taller_Proceso (
     FOREIGN KEY (idProceso) REFERENCES Proceso(idProceso)
 );
 
--- Relaciones entre Proceso e Impresi髇, Manufactura, Otros
+INSERT INTO Taller_Proceso (idTaller, idProceso) VALUES
+(1, 1),
+(2, 2);
+
+-- Relaciones entre Proceso e Impresi贸n, Manufactura, Otros
 CREATE TABLE Proceso_Impresion (
     idProceso INT,
     idImpresion INT,
@@ -152,6 +215,10 @@ CREATE TABLE Proceso_Impresion (
     FOREIGN KEY (idProceso) REFERENCES Proceso(idProceso),
     FOREIGN KEY (idImpresion) REFERENCES Impresion(idImpresion)
 );
+
+INSERT INTO Proceso_Impresion (idProceso, idImpresion) VALUES
+(1, 1),
+(2, 2);
 
 CREATE TABLE Proceso_Manufactura (
     idProceso INT,
@@ -161,6 +228,10 @@ CREATE TABLE Proceso_Manufactura (
     FOREIGN KEY (idManufactura) REFERENCES ManufacturaMetalMecanica(idManufactura)
 );
 
+INSERT INTO Proceso_Manufactura (idProceso, idManufactura) VALUES
+(1, 1),
+(2, 2);
+
 CREATE TABLE Proceso_Otros (
     idProceso INT,
     idOtro INT,
@@ -168,3 +239,7 @@ CREATE TABLE Proceso_Otros (
     FOREIGN KEY (idProceso) REFERENCES Proceso(idProceso),
     FOREIGN KEY (idOtro) REFERENCES Otros(idOtro)
 );
+
+INSERT INTO Proceso_Otros (idProceso, idOtro) VALUES
+(1, 1),
+(2, 2);
